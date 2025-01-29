@@ -11,14 +11,18 @@ import { toast } from "react-toastify";
 
 const UserList = () => {
   const dispatch = useDispatch();
+
   const usersState = useSelector((state) => state.users);
-  const bookmarks = useSelector((state) => state.bookmarkedUsers);
+  const bookmarks =  useSelector((state) => state.bookmarkedUsers);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);  
-const [pre_item, setPreItem] = useState(5)
+  const [pre_item, setPreItem] = useState(5)
 
+    // console.log(usersState)
+    //console.log(bookmarks)
   const fetchUsers = async (item) => {
-console.log(item);
+
 
     try {
       const response = await axios.get(`https://api.github.com/users?per_page=${item}&page=1`);
@@ -54,17 +58,19 @@ console.log(item);
 
   useEffect(() => {
     dispatch(loadingUsers());
-    fetchUsers(pre_item)
-      .then((users) => {
+    //fetch users
+    fetchUsers(pre_item).then((users) => {
         dispatch(setUsers(users));  
-      })
-      .catch((error) => console.error(error));  
+      }).catch((error) => console.error(error));  
+
   }, [dispatch, pre_item]); 
 
   const handleBookmark = (user) => {
-    if (bookmarks.some((item) => item.id === user.id)) {
+    if (bookmarks.find((item) => item.id === user.id)) {
+
       toast(`${user.login} Removed from Bookmark!`);
       dispatch(removeBookmark(user));
+
     } else {
       toast(`${user.login} Added to Bookmark!`);
       dispatch(addBookmark(user));
@@ -78,6 +84,7 @@ console.log(item);
   const filteredUsers = usersState.users.filter((user) =>
     user.login.toLowerCase().includes(searchQuery)
   );
+  
 const handleLoadMore=()=>{
   setLoading(true);
   toast(`Loading more users...`);
@@ -88,12 +95,10 @@ const handleLoadMore=()=>{
 
   const handleRefresh = () => {
    
-    
     dispatch(loadingUsers());
     setPreItem(5)
     fetchUsers(pre_item)  
     toast(`Refreshing users...`);
- 
      
   };
 
@@ -140,7 +145,7 @@ const handleLoadMore=()=>{
                 </a>
               </div>
               <button onClick={() => handleBookmark(user)}>
-                {bookmarks.some((b) => b.id === user.id) ? (
+                {bookmarks.find((b) => b.id === user.id) ? (
                   <BookmarkCheck className="w-6 h-6 text-blue-600" />
                 ) : (
                   <BookmarkPlus className="w-6 h-6 text-gray-400" />

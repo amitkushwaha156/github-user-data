@@ -6,21 +6,21 @@ import { toast } from 'react-toastify';
 import { debounce } from 'lodash';
 
 
- const removeBookmark = (user) => ({
-  type: 'REMOVE_BOOKMARK',
-  payload: user,
-});
-
-
 const BookmarkedUsers = () => {
   const [searchItem, setSearchItem] = useState("");
-
+  
   const bookmarks = useSelector(state => state.bookmarkedUsers);
   const dispatch = useDispatch();
+  
+  
+  const removeBookmark = (user) => ({
+   type: 'REMOVE_BOOKMARK',
+   payload: user,
+  });
 
   const handleRemoveBookmark = (user) => {
-              toast(`${user.login} Remove From Bookmark!`);
-     
+
+    toast(`${user.login} Remove From Bookmark!`);
     dispatch(removeBookmark(user));
   };
 
@@ -31,6 +31,7 @@ const BookmarkedUsers = () => {
     const filteredUsers = bookmarks.filter((user) =>
       user.login.toLowerCase().includes(searchItem)
     );
+
   return (
     <div>
      <div className="relative w-full max-w-md mb-1 ">
@@ -65,7 +66,7 @@ const BookmarkedUsers = () => {
           </a>
           </div>
             <button onClick={() => handleRemoveBookmark(user)}>
-              {bookmarks.some((item) => item.id === user.id) ? (
+              {bookmarks.find((item) => item.id === user.id) ? (
                 <BookmarkCheck className="w-6 h-6 text-blue-600" />
               ) : (
                 <BookmarkPlus className="w-6 h-6 text-gray-400" />
